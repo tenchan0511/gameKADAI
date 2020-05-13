@@ -127,11 +127,13 @@
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="keycheck.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="effect.h" />
     <ClInclude Include="keycheck.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="stage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

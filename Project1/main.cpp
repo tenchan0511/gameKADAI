@@ -2,6 +2,7 @@
 #include "main.h"
 #include "keycheck.h"
 #include "effect.h"
+#include "stage.h"
 
 // 変数
 int sceneCounter;
@@ -107,6 +108,7 @@ bool SystemInit(void)
 	SetDrawScreen(DX_SCREEN_BACK);					// ひとまずバックバッファに描画
 
 	keyInit();			// キー情報の初期化
+	StageSystemInit();	// ステージの初期化
 
 	// グラフィックの登録
 
@@ -123,7 +125,7 @@ bool SystemInit(void)
 // 初期化シーン
 void InitScene(void)
 {
-
+	StageInit();
 }
 
 // タイトルシーン
@@ -174,10 +176,12 @@ void GameMain(void)
 
 void GameDraw(void)
 {
+	StageDrawInit();
+
 	DrawFormatString(0, 0, GetColor(255, 255, 255), "GameCounter = %d", sceneCounter);
 	DrawFormatString(50, 50, GetColor(255, 255, 255), "test = %d", testcnt);
 
-	DrawBox(100, 100, 700, 500, GetColor(255, 0, 0), true);
+	/*DrawBox(100, 100, 700, 500, GetColor(255, 0, 0), true);*/
 
 	// PAUSE描画
 	if (pauseFlag)

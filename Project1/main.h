@@ -10,7 +10,7 @@
 #endif
 // 定義
 #define SCREEN_SIZE_X 800	// 画面の横サイズ
-#define SCREEN_SIZE_Y 600	// 画面の縦サイズ
+#define SCREEN_SIZE_Y 672	// 画面の縦サイズ
 
 // シーン管理用
 enum SCN_ID 
@@ -20,6 +20,21 @@ enum SCN_ID
 	SCN_ID_GAME,		// ゲームシーン
 	SCN_ID_GAMEOVER,	// ゲームオーバーシーン
 	SCN_ID_MAX
+};
+
+enum DIR
+{
+	DIR_UP,
+	DIR_RIGHT,
+	DIR_DOWN,
+	DIR_LEFT,
+	DIR_MAX
+};
+
+struct XY
+{
+	int x;
+	int y;
 };
 
 // プロトタイプ宣言
