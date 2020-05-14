@@ -8,7 +8,16 @@
 #define MAP_X 25	   // ステージの横サイズ（チップ数）
 #define MAP_Y 20	   // ステージの縦サイズ（チップ数）
 
+// ステージ
+enum STAGE_ID {
+	STAGE_ID_1,
+	STAGE_ID_2,
+	STAGE_ID_MAX,
+};
+
 // プロトタイプ宣言
 bool StageSystemInit(void);
 void StageInit(void);
 void StageDrawInit(void);
+
+void SetMapData(STAGE_ID stage_ID);
