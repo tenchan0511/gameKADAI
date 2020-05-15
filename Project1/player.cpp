@@ -1,5 +1,6 @@
 #include "DxLib.h"
 #include "main.h"
+#include "keycheck.h"
 #include "player.h"
 #include "effect.h"
 
@@ -19,8 +20,8 @@ void PlayerSystemInit(void)
 	);
 
 	player.moveDir = DIR_DOWN;				// キャラの向き
-	player.pos.x = 0;						// プレイヤーの初期位置
-	player.pos.y = 0;						// プレイヤーの初期位置
+	player.pos.x = 300;						// プレイヤーの初期位置
+	player.pos.y = 500;						// プレイヤーの初期位置
 	player.size.x = PLAYER_SIZE_X;			// プレイヤーの横サイズ
 	player.size.y = PLAYER_SIZE_Y;			// プレイヤーの縦サイズ
 	player.offsetSize.x = player.size.x / 2;// プレイヤーの座標
@@ -40,7 +41,40 @@ bool PlayerGameInit(void)
 	return rtnFlag;
 }
 
+void PlayerControl(void)
+{
+	bool moveFlag = false;	// true:移動
+
+	// プレイヤーの向き設定
+	if (keyNew[KEY_ID_UP])
+	{
+		player.moveDir = DIR_UP;
+		moveFlag = true;
+	}
+	if (keyNew[KEY_ID_RIGHT])
+	{
+		player.moveDir = DIR_RIGHT;
+		moveFlag = true;
+
+	}
+	if (keyNew[KEY_ID_DOWN])
+	{
+		player.moveDir = DIR_DOWN;
+		moveFlag = true;
+	}
+	if (keyNew[KEY_ID_LEFT])
+	{
+		player.moveDir = DIR_LEFT;
+		moveFlag = true;
+	}
+}
+
 void PlayerGameDraw(void)
 {
+	PlayerControl();
+	player.animCnt++;
 
+	DrawGraph(player.pos.x, player.pos.y, playerImage[player.moveDir][(player.animCnt / 10) % 3], true);
+
+	DrawFormatString(300, 0, 0xffffff, "anmCnt = %d", player.animCnt);
 }

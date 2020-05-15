@@ -11,3 +11,4 @@
 void PlayerSystemInit(void);	// システム
 bool PlayerGameInit(void);		// シーン
 void PlayerGameDraw(void);		// 描画
+void PlayerControl(void);			// プレイヤーの移動
