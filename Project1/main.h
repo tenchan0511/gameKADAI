@@ -37,6 +37,17 @@ struct XY
 	int y;
 };
 
+struct CHARACTER
+{
+	DIR moveDir;		// キャラの向き
+	XY pos;				// キャラの座標
+	XY offsetSize;		// キャラの初期位置
+	XY size;			// キャラのサイズ
+	int moveSpeed;		// キャラのスピード
+	int life;			// 残機数
+	int animCnt;		// キャラのアニメーションカウンタ
+};
+
 // プロトタイプ宣言
 
 // システム系初期化
