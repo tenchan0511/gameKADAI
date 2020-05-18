@@ -173,6 +173,8 @@ void GameMain(void)
 	if (!pauseFlag)
 	{
 		testcnt++;
+
+		PlayerControl();
 	}
 	GameDraw();
 }

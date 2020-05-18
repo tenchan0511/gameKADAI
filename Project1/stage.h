@@ -20,4 +20,8 @@ bool StageSystemInit(void);
 void StageInit(void);
 void StageDrawInit(void);
 
+XY PosToIndex(XY pos);	// マップ上のプレイヤーの座標を求める関数
+
+bool IsPass(XY pos);	// 通ってよいか判断する
+
 void SetMapData(STAGE_ID stage_ID);
