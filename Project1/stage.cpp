@@ -177,25 +177,6 @@ bool IsPass(XY pos)
 			return true;
 		}
 
-	//	switch (map[index.y][index.y])
-	//	{
-	//	case 34:
-	//	case 42:
-	//	case 80:
-	//	case 81:
-	//	case 83:
-	//	case 76:
-	//	case 77:
-	//	case 78:
-	//	return false;
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//{
-	//	 ’Ê‚ê‚é
-	//	return true;
-	//}
 }
 
 void SetMapData(STAGE_ID stageID)

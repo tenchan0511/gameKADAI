@@ -95,6 +95,7 @@ XY PlayerControl(void)
 			{
 				playerPosCopy.x -= player.moveSpeed;
 				playerPosOffset.x = playerPosCopy.x;
+				playerPosOffset.y = playerPosCopy.y + player.offsetSize.y;
 				if (IsPass(playerPosOffset))
 				{
 					// ’Ê‚ê‚é
@@ -107,6 +108,7 @@ XY PlayerControl(void)
 			{
 				playerPosCopy.x += player.moveSpeed;
 				playerPosOffset.x = playerPosCopy.x + player.size.x;
+				playerPosOffset.y = playerPosCopy.y + player.offsetSize.y;
 				if (IsPass(playerPosOffset))
 				{
 					// ’Ê‚ê‚é
@@ -118,6 +120,7 @@ XY PlayerControl(void)
 			if (playerPosCopy.y > 0)
 			{
 				playerPosCopy.y -= player.moveSpeed;
+				playerPosOffset.x = playerPosCopy.x + player.offsetSize.x;
 				playerPosOffset.y = playerPosCopy.y;
 				if (IsPass(playerPosOffset))
 				{
