@@ -4,6 +4,7 @@
 #include "effect.h"
 #include "stage.h"
 #include "player.h"
+#include "enemy.h"
 
 // 変数
 int sceneCounter;
@@ -111,6 +112,7 @@ bool SystemInit(void)
 	keyInit();			// キー情報の初期化
 	StageSystemInit();	// ステージの初期化
 	PlayerSystemInit();	// プレイヤーの情報初期化
+	EnemySystemInit();	// 敵の初期化
 
 	// グラフィックの登録
 
@@ -129,6 +131,7 @@ void InitScene(void)
 {
 	StageInit();
 	PlayerGameInit();
+	EnemyGameInit();
 }
 
 // タイトルシーン
@@ -183,6 +186,7 @@ void GameDraw(void)
 {
 	StageDrawInit();
 	PlayerGameDraw();
+	EnemyDrawInit();
 
 	DrawFormatString(0, 0, GetColor(255, 255, 255), "GameCounter = %d", sceneCounter);
 	DrawFormatString(50, 50, GetColor(255, 255, 255), "test = %d", testcnt);

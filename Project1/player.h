@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 // 定義
 #define PLAYER_V 4			// プレイヤー縦分割数

@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 // 定義
 #define CHIP_SIZE_X 32 // マップチップ分割後の横サイズ	
