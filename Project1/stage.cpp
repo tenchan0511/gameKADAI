@@ -159,24 +159,43 @@ bool IsPass(XY pos)
 	XY index;
 	index = PosToIndex(pos);
 
-	if (map[index.y][index.x] == 34
-		|| map[index.y][index.x] == 42
-		|| map[index.y][index.x] == 80
-		|| map[index.y][index.x] == 81
-		|| map[index.y][index.x] == 83
-		|| map[index.y][index.x] == 76
-		|| map[index.y][index.x] == 77
-		|| map[index.y][index.x] == 78)
-		{
-			 //’Ê‚ê‚È‚¢
-			return false;
-		}
-		else
-		{
-			 //’Ê‚ê‚é
-			return true;
-		}
+	//if (map[index.y][index.x] == 34
+	//	|| map[index.y][index.x] == 42
+	//	|| map[index.y][index.x] == 80
+	//	|| map[index.y][index.x] == 81
+	//	|| map[index.y][index.x] == 83
+	//	|| map[index.y][index.x] == 76
+	//	|| map[index.y][index.x] == 77
+	//	|| map[index.y][index.x] == 78)
+	//	{
+	//		 //’Ê‚ê‚È‚¢
+	//		return false;
+	//	}
+	//	else
+	//	{
+	//		 //’Ê‚ê‚é
+	//		return true;
+	//	}
 
+	switch (map[index.y][index.x])
+	{
+	case 34:
+	case 42:
+	case 80:
+	case 81:
+	case 83:
+	case 76:
+	case 77:
+	case 78:
+		return false;
+		break;
+	default:
+		break;
+	}
+	{
+		// ’Ê‚ê‚é
+		return true;
+	}
 }
 
 void SetMapData(STAGE_ID stageID)

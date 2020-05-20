@@ -31,6 +31,14 @@ enum DIR
 	DIR_MAX
 };
 
+// 表示ソート用
+enum CHARACTER_TYPE
+{
+	CHARACTER_PLAYER,
+	CHARACTER_ENEMY,
+	CHARACTER_MAX
+};
+
 struct XY
 {
 	int x;
@@ -39,6 +47,7 @@ struct XY
 
 struct CHARACTER
 {
+	int charType;		// キャラの種類
 	DIR moveDir;		// キャラの向き
 	XY pos;				// キャラの座標
 	XY offsetSize;		// キャラの初期位置
@@ -68,4 +77,5 @@ void GameDraw(void);
 void GameOverScene(void);
 void GameOverDraw(void);
 
-
+// Y座標リスト
+void AddCharOrder(CHARACTER_TYPE characterType, int index, int y);

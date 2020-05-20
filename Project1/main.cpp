@@ -6,10 +6,24 @@
 #include "player.h"
 #include "enemy.h"
 
+// 定数
+#define DRAW_ORDER_MAX			ENEMY_MAX + 1
+
+struct DRAW_ORDER
+{
+	CHARACTER_TYPE characterType;	// キャラの種類
+	int index;					// 各キャラの添え字
+	int y;						// キャラの足元Y座標
+};
+
 // 変数
 int sceneCounter;
 SCN_ID scnID;		// シーン管理用
 SCN_ID scnIDpre;
+
+// 表示ソート用
+int drawOrderCnt;
+DRAW_ORDER drawOrderList[DRAW_ORDER_MAX];
 
 // Winmain関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -154,6 +168,7 @@ void TitleDraw(void)
 // ゲームシーン
 void GameMain(void)
 {
+	XY playerPos;
 	if (keyDownTrigger[KEY_ID_SPACE])
 	{
 		/*scnID = SCN_ID_GAMEOVER;*/
@@ -177,7 +192,8 @@ void GameMain(void)
 	{
 		testcnt++;
 
-		PlayerControl();
+		playerPos = PlayerControl();
+		EnemyControl(playerPos);
 	}
 	GameDraw();
 }
@@ -218,3 +234,29 @@ void GameOverDraw(void)
 	DrawBox(100, 100, 700, 500, GetColor(0, 0, 255), true);
 }
 
+void AddCharOrder(CHARACTER_TYPE characterType, int index, int y)
+{
+	int insertIndex = drawOrderCnt;// 挿入場所の配列の添え字
+
+	for (int i = 0; i < drawOrderCnt; i++)
+	{
+		if (y < drawOrderList[i].y)	// リストのデータと引数ｙを比較
+		{
+			insertIndex = i;// 挿入場所の配列の添え字
+			break;
+		}
+	}
+
+	// 挿入場所が決まったので、挿入場所を空けるためにほかのデータを移動させる
+	for (int i = drawOrderCnt; i > insertIndex; i--)
+	{
+		// データをコピー
+		drawOrderList[i] = drawOrderList[i - 1];
+	}
+
+	// 挿入場所にデータを追加(配列に追加)
+	drawOrderList[insertIndex].characterType = characterType;
+	drawOrderList[insertIndex].index = index;
+	drawOrderList[insertIndex].y = y;
+	drawOrderCnt++;
+}

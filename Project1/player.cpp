@@ -2,6 +2,7 @@
 #include "main.h"
 #include "keycheck.h"
 #include "player.h"
+#include "enemy.h"
 #include "stage.h"
 #include "effect.h"
 
@@ -138,7 +139,13 @@ void PlayerGameDraw(void)
 {
 	player.animCnt++;
 
-	DrawGraph(player.pos.x, player.pos.y, playerImage[player.moveDir][(player.animCnt / 10) % 3], true);
+	XY index;
+	index = PosToIndex(player.pos);
+
+	DrawGraph(
+		player.pos.x, 
+		player.pos.y, 
+		playerImage[player.moveDir][(player.animCnt / 10) % 3], true);
 
 	DrawFormatString(300, 0, 0xffffff, "anmCnt = %d", player.animCnt);
 }

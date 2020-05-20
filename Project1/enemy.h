@@ -1,7 +1,7 @@
 //#pragma once
 
 // 定数
-#define ENEMY_MAX 10	// 敵キャラ数
+#define ENEMY_MAX 7	// 敵キャラ数
 #define ENEMY_SIZE_X 32	// 敵キャラ横サイズ
 #define ENEMY_SIZE_Y 48 // 敵キャラ縦サイズ
 
@@ -20,3 +20,9 @@ void EnemyControl(XY playerPos);
 void EnemyDrawInit(void);
 
 // 敵の移動関数
+int MoveEnemyX(CHARACTER* enemy, XY playerpos);
+int MoveEnemyY(CHARACTER* enemy, XY playerpos);
+int MoveEnemyXY(CHARACTER* enemy, XY playerpos);
+
+extern CHARACTER enemy[ENEMY_MAX];
+extern CHARACTER enemyindividual[ENEMY_TYPE_MAX];

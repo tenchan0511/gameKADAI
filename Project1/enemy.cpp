@@ -13,6 +13,7 @@ int moveCnt;
 void EnemySystemInit(void)
 {
 	// enemy1
+	enemyindividual[ENEMY_TYPE_NORMAL].charType = ENEMY_TYPE_NORMAL;
 	enemyindividual[ENEMY_TYPE_NORMAL].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_NORMAL].size.y = ENEMY_SIZE_Y;
 	enemyindividual[ENEMY_TYPE_NORMAL].moveSpeed = 2;
@@ -27,6 +28,7 @@ void EnemySystemInit(void)
 	);
 
 	// enemy2
+	enemyindividual[ENEMY_TYPE_FAST].charType = ENEMY_TYPE_FAST;
 	enemyindividual[ENEMY_TYPE_FAST].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_FAST].size.y = ENEMY_SIZE_Y;
 	enemyindividual[ENEMY_TYPE_FAST].moveSpeed = 5;
@@ -41,6 +43,7 @@ void EnemySystemInit(void)
 	);
 
 	// enemy3
+	enemyindividual[ENEMY_TYPE_SEARCH].charType = ENEMY_TYPE_SEARCH;
 	enemyindividual[ENEMY_TYPE_SEARCH].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_SEARCH].size.y = ENEMY_SIZE_Y;
 	enemyindividual[ENEMY_TYPE_SEARCH].moveSpeed = 3;
@@ -59,8 +62,43 @@ void EnemySystemInit(void)
 		enemyindividual[y].moveDir = DIR_DOWN;
 		enemyindividual[y].offsetSize.x = enemyindividual[y].size.x / 2;
 		enemyindividual[y].offsetSize.y = enemyindividual[y].size.y / 2;
-
+		enemyindividual[y].pos.x = enemyindividual[y].offsetSize.x;
+		enemyindividual[y].pos.y = enemyindividual[y].offsetSize.y;
+		enemyindividual[y].animCnt = 0;
 	}
+
+	enemy[0].charType = enemyindividual[ENEMY_TYPE_NORMAL].charType;
+	enemy[1].charType = enemyindividual[ENEMY_TYPE_NORMAL].charType;
+	enemy[2].charType = enemyindividual[ENEMY_TYPE_NORMAL].charType;
+	enemy[3].charType = enemyindividual[ENEMY_TYPE_FAST].charType;
+	enemy[4].charType = enemyindividual[ENEMY_TYPE_FAST].charType;
+	enemy[5].charType = enemyindividual[ENEMY_TYPE_SEARCH].charType;
+	enemy[6].charType = enemyindividual[ENEMY_TYPE_SEARCH].charType;
+
+	enemy[0].pos.x = 100;
+	enemy[0].pos.y = 100;
+	enemy[1].pos.x = 200;
+	enemy[1].pos.y = 200;
+	enemy[2].pos.x = 200;
+	enemy[2].pos.y = 100;
+	enemy[3].pos.x = 100;
+	enemy[3].pos.y = 200;
+	enemy[4].pos.x = 300;
+	enemy[4].pos.y = 300;
+	enemy[5].pos.x = 400;
+	enemy[5].pos.y = 400;
+	enemy[6].pos.x = 300;
+	enemy[6].pos.y = 400;
+
+	for (int i = 0; i < ENEMY_MAX; i++)
+	{
+		enemy[i].moveSpeed = enemyindividual[enemy[i].charType].moveSpeed;
+		enemy[i].offsetSize.x = enemyindividual[enemy[i].charType].offsetSize.x;
+		enemy[i].offsetSize.y = enemyindividual[enemy[i].charType].offsetSize.y;
+		enemy[i].size.x = enemyindividual[enemy[i].charType].size.x;
+		enemy[i].size.y = enemyindividual[enemy[i].charType].size.y;
+	}
+	moveCnt = 0;
 }
 
 bool EnemyGameInit(void)
@@ -74,14 +112,106 @@ bool EnemyGameInit(void)
 
 void EnemyControl(XY playerPos)
 {
-
+	moveCnt++;
+	for (int i = 0; i < ENEMY_MAX; i++)
+	{
+		switch (enemy[i].charType)
+		{
+		case ENEMY_TYPE_NORMAL:
+			if ((moveCnt / 60) % 2 == 0)
+			{
+				if (MoveEnemyX(&enemy[i], playerPos) == 0)
+				{
+					MoveEnemyY(&enemy[i], playerPos);
+				}
+			}
+		case ENEMY_TYPE_FAST:
+			if ((moveCnt / 30) % 2 == 0)
+			{
+				if (MoveEnemyY(&enemy[i], playerPos) == 0)
+				{
+					MoveEnemyX(&enemy[i], playerPos);
+				}
+			}
+		case ENEMY_TYPE_SEARCH:
+			if ((moveCnt / 45) % 2 == 0)
+			{
+				MoveEnemyXY(&enemy[i], playerPos);
+			}
+		}
+	}
 }
 
 void EnemyDrawInit(void)
 {
 	DrawGraph(
-		enemyindividual[ENEMY_TYPE_NORMAL].pos.x, 
-		enemyindividual[ENEMY_TYPE_NORMAL].pos.y,
+		enemy[ENEMY_TYPE_NORMAL].pos.x, 
+		enemy[ENEMY_TYPE_NORMAL].pos.y,
 		enemyImage[ENEMY_TYPE_NORMAL][0],
 		true);
+}
+
+int MoveEnemyX(CHARACTER* enemy, XY playerpos)
+{
+	int speed = (*enemy).moveSpeed;
+
+	int diff = playerpos.x - (*enemy).pos.x;
+	if (diff >= 0)
+	{
+		speed = (diff < speed) ? diff : speed;
+
+		// ˆÚ“®
+		(*enemy).pos.x += speed;
+		(*enemy).moveDir = DIR_RIGHT;
+	}
+	else
+	{
+		speed = (-diff < speed) ? -diff : speed;
+
+		(*enemy).pos.x -= speed;
+		(*enemy).moveDir = DIR_LEFT;
+	}
+	return speed;
+}
+
+int MoveEnemyY(CHARACTER* enemy, XY playerpos)
+{
+	int speed = (*enemy).moveSpeed;
+	int diff = playerpos.y - (*enemy).pos.y;//()‚Å—Dæ‡ˆÊ‚ðŽw’è
+	if (diff >= 0)
+	{
+		// speed‚ð•Ï‚¦‚é‚©
+		speed = (diff < speed) ? diff : speed;
+
+		// ˆÚ“®
+		(*enemy).pos.y += speed;
+		(*enemy).moveDir = DIR_DOWN;
+	}
+	else
+	{
+		speed = (-diff < speed) ? -diff : speed;
+
+		(*enemy).pos.y -= speed;
+		(*enemy).moveDir = DIR_UP;
+	}
+	return speed;
+}
+
+int MoveEnemyXY(CHARACTER* enemy, XY playerpos)
+{
+	int speed = (*enemy).moveSpeed;
+	int diffX = playerpos.x - (*enemy).pos.x;
+	int diffY = playerpos.y - (*enemy).pos.y;
+
+	// ‹——£‚ð”»’f‚µ‚ÄˆÚ“®•ûŒü‚ðŒˆ‚ß‚é
+	if (abs(diffX) > abs(diffY))
+	{
+		speed = MoveEnemyX(enemy, playerpos);
+	}
+	else
+	{
+		speed = MoveEnemyY(enemy, playerpos);
+	}
+
+	return speed;
 }
