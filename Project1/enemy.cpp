@@ -9,6 +9,7 @@ CHARACTER enemy[ENEMY_MAX];
 CHARACTER enemyindividual[ENEMY_TYPE_MAX];
 int enemyImage[ENEMY_TYPE_MAX][12];
 int moveCnt;
+int moveDir;
 
 void EnemySystemInit(void)
 {
@@ -31,7 +32,7 @@ void EnemySystemInit(void)
 	enemyindividual[ENEMY_TYPE_FAST].charType = ENEMY_TYPE_FAST;
 	enemyindividual[ENEMY_TYPE_FAST].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_FAST].size.y = ENEMY_SIZE_Y;
-	enemyindividual[ENEMY_TYPE_FAST].moveSpeed = 2;
+	enemyindividual[ENEMY_TYPE_FAST].moveSpeed = 4;
 	LoadDivGraph(
 		"image/enemy03.png",
 		12,
@@ -56,6 +57,8 @@ void EnemySystemInit(void)
 		ENEMY_SIZE_Y,
 		&enemyImage[ENEMY_TYPE_SEARCH][0]
 	);
+
+	moveDir = 0;
 
 	for (int y = 0; y < ENEMY_TYPE_MAX; y++)
 	{
@@ -92,6 +95,7 @@ void EnemySystemInit(void)
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
+		enemy[i].moveDir = enemyindividual[enemy[i].charType].moveDir = DIR_DOWN;
 		enemy[i].moveSpeed = enemyindividual[enemy[i].charType].moveSpeed;
 		enemy[i].offsetSize.x = enemyindividual[enemy[i].charType].offsetSize.x;
 		enemy[i].offsetSize.y = enemyindividual[enemy[i].charType].offsetSize.y;
@@ -128,12 +132,18 @@ void EnemyControl(XY playerPos)
 			}
 			break;
 		case ENEMY_TYPE_FAST:
+			
+			if (moveCnt % 30 == 0)
+			{
+				moveDir = GetRand(DIR_MAX - 1);
+			}
 			if ((moveCnt / 30) % 2 == 0)
 			{
-				if (MoveEnemyY(&enemy[i], playerPos) == 0)
+				MoveEnemyRandom(&enemy[i], moveDir);
+				/*if (MoveEnemyY(&enemy[i], playerPos) == 0)
 				{
 					MoveEnemyX(&enemy[i], playerPos);
-				}
+				}*/
 			}
 			break;
 		case ENEMY_TYPE_SEARCH:
@@ -153,13 +163,13 @@ void EnemyControl(XY playerPos)
 void EnemyDrawInit(int index)
 {
 	
-		enemy[index].animCnt++;
+	enemy[index].animCnt++;
 
-		DrawGraph(
-			enemy[index].pos.x,
-			enemy[index].pos.y,
-			enemyImage[enemy[index].charType][(enemy[index].moveDir * 3) + ((enemy[index].animCnt / 10) % 3)],
-			true);
+	DrawGraph(
+		enemy[index].pos.x,
+		enemy[index].pos.y,
+		enemyImage[enemy[index].charType][(enemy[index].moveDir * 3) + ((enemy[index].animCnt / 10) % 3)],
+		true);
 	
 }
 
@@ -243,4 +253,36 @@ bool PlayerHitCheck(XY ePos, int eSize)
 		}
 	}
 	return false;
+}
+
+int MoveEnemyRandom(CHARACTER* enemy, int moveDir)
+{
+	int speed = (*enemy).moveSpeed;
+	
+	switch (moveDir)
+	{
+	case DIR_DOWN:
+		// ˆÚ“®
+		(*enemy).pos.y += speed;
+		(*enemy).moveDir = DIR_DOWN;
+		break;
+	case DIR_LEFT:
+		// ˆÚ“®
+		(*enemy).pos.x -= speed;
+		(*enemy).moveDir = DIR_LEFT;
+		break;
+	case DIR_RIGHT:
+		// ˆÚ“®
+		(*enemy).pos.x += speed;
+		(*enemy).moveDir = DIR_RIGHT;
+		break;
+	case DIR_UP:
+		// ˆÚ“®
+		(*enemy).pos.y -= speed;
+		(*enemy).moveDir = DIR_UP;
+		break;
+	default:
+		break;
+	}
+	return speed;
 }

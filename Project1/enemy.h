@@ -23,6 +23,7 @@ void EnemyDrawInit(int index);
 int MoveEnemyX(CHARACTER* enemy, XY playerpos);
 int MoveEnemyY(CHARACTER* enemy, XY playerpos);
 int MoveEnemyXY(CHARACTER* enemy, XY playerpos);
+int MoveEnemyRandom(CHARACTER* enemy, int moveDir);
 
 extern CHARACTER enemy[ENEMY_MAX];
 extern CHARACTER enemyindividual[ENEMY_TYPE_MAX];
