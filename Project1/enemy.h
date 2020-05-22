@@ -17,7 +17,7 @@ enum ENEMY_TYPE
 void EnemySystemInit(void);
 bool EnemyGameInit(void);
 void EnemyControl(XY playerPos);
-void EnemyDrawInit(void);
+void EnemyDrawInit(int index);
 
 // ìGÇÃà⁄ìÆä÷êî
 int MoveEnemyX(CHARACTER* enemy, XY playerpos);
@@ -26,3 +26,5 @@ int MoveEnemyXY(CHARACTER* enemy, XY playerpos);
 
 extern CHARACTER enemy[ENEMY_MAX];
 extern CHARACTER enemyindividual[ENEMY_TYPE_MAX];
+
+bool PlayerHitCheck(XY ePos, int eSize);

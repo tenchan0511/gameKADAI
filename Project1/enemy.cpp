@@ -16,7 +16,7 @@ void EnemySystemInit(void)
 	enemyindividual[ENEMY_TYPE_NORMAL].charType = ENEMY_TYPE_NORMAL;
 	enemyindividual[ENEMY_TYPE_NORMAL].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_NORMAL].size.y = ENEMY_SIZE_Y;
-	enemyindividual[ENEMY_TYPE_NORMAL].moveSpeed = 2;
+	enemyindividual[ENEMY_TYPE_NORMAL].moveSpeed = 1;
 	LoadDivGraph(
 		"image/enemy01.png",
 		12,
@@ -31,7 +31,7 @@ void EnemySystemInit(void)
 	enemyindividual[ENEMY_TYPE_FAST].charType = ENEMY_TYPE_FAST;
 	enemyindividual[ENEMY_TYPE_FAST].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_FAST].size.y = ENEMY_SIZE_Y;
-	enemyindividual[ENEMY_TYPE_FAST].moveSpeed = 5;
+	enemyindividual[ENEMY_TYPE_FAST].moveSpeed = 2;
 	LoadDivGraph(
 		"image/enemy03.png",
 		12,
@@ -46,7 +46,7 @@ void EnemySystemInit(void)
 	enemyindividual[ENEMY_TYPE_SEARCH].charType = ENEMY_TYPE_SEARCH;
 	enemyindividual[ENEMY_TYPE_SEARCH].size.x = ENEMY_SIZE_X;
 	enemyindividual[ENEMY_TYPE_SEARCH].size.y = ENEMY_SIZE_Y;
-	enemyindividual[ENEMY_TYPE_SEARCH].moveSpeed = 3;
+	enemyindividual[ENEMY_TYPE_SEARCH].moveSpeed = 2;
 	LoadDivGraph(
 		"image/enemy02.png",
 		12,
@@ -120,11 +120,13 @@ void EnemyControl(XY playerPos)
 		case ENEMY_TYPE_NORMAL:
 			if ((moveCnt / 60) % 2 == 0)
 			{
-				if (MoveEnemyX(&enemy[i], playerPos) == 0)
+				/*if (MoveEnemyX(&enemy[i], playerPos) == 0)
 				{
 					MoveEnemyY(&enemy[i], playerPos);
-				}
+				}*/
+				MoveEnemyXY(&enemy[i], playerPos);
 			}
+			break;
 		case ENEMY_TYPE_FAST:
 			if ((moveCnt / 30) % 2 == 0)
 			{
@@ -133,22 +135,32 @@ void EnemyControl(XY playerPos)
 					MoveEnemyX(&enemy[i], playerPos);
 				}
 			}
+			break;
 		case ENEMY_TYPE_SEARCH:
 			if ((moveCnt / 45) % 2 == 0)
 			{
 				MoveEnemyXY(&enemy[i], playerPos);
 			}
+			break;
+		default:
+			break;
 		}
+		// ï\é¶èáÇ…ÉfÅ[É^Çäiî[
+		AddCharOrder(CHARACTER_ENEMY, i, enemy[i].pos.y + enemy[i].size.y);
 	}
 }
 
-void EnemyDrawInit(void)
+void EnemyDrawInit(int index)
 {
-	DrawGraph(
-		enemy[ENEMY_TYPE_NORMAL].pos.x, 
-		enemy[ENEMY_TYPE_NORMAL].pos.y,
-		enemyImage[ENEMY_TYPE_NORMAL][0],
-		true);
+	
+		enemy[index].animCnt++;
+
+		DrawGraph(
+			enemy[index].pos.x,
+			enemy[index].pos.y,
+			enemyImage[enemy[index].charType][(enemy[index].moveDir * 3) + ((enemy[index].animCnt / 10) % 3)],
+			true);
+	
 }
 
 int MoveEnemyX(CHARACTER* enemy, XY playerpos)
@@ -214,4 +226,21 @@ int MoveEnemyXY(CHARACTER* enemy, XY playerpos)
 	}
 
 	return speed;
+}
+
+bool PlayerHitCheck(XY ePos, int eSize)
+{
+	for (int en = 0; en < ENEMY_MAX; en++)
+	{
+		// ìGÇ∆ÇÃîªíË
+		if ((enemy[en].pos.x - enemy[en].size.x / 2 < ePos.x + eSize)
+			&& (enemy[en].pos.x + enemy[en].size.x / 2 > ePos.x)
+			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y + eSize)
+			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y))
+		{
+			// ìñÇΩÇË
+			return true;
+		}
+	}
+	return false;
 }

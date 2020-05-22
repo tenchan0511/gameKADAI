@@ -22,8 +22,8 @@ SCN_ID scnID;		// シーン管理用
 SCN_ID scnIDpre;
 
 // 表示ソート用
-int drawOrderCnt;
-DRAW_ORDER drawOrderList[DRAW_ORDER_MAX];
+int drawOrderCnt;							// Listに格納されたデータ数
+DRAW_ORDER drawOrderList[DRAW_ORDER_MAX];	// ソート用配列
 
 // Winmain関数
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -116,7 +116,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 bool SystemInit(void)
 {
 	// システム処理
-	SetWindowText("BaseProject");
+	SetWindowText("Project1");
 
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 16); // 640×480ドット65536色モードに設定
 	ChangeWindowMode(true);							// true:window false:フルスクリーン
@@ -134,6 +134,16 @@ bool SystemInit(void)
 	// 変数初期化
 	sceneCounter = 0;
 	scnID = SCN_ID_INIT;
+
+	// 配列の初期化
+	drawOrderCnt = 0;
+	for (int i = 0; i < DRAW_ORDER_MAX; i++)
+	{
+		// 配列の初期化
+		drawOrderList[i].characterType = CHARACTER_MAX;
+		drawOrderList[i].index = 0;
+		drawOrderList[i].y = 0;
+	}
 
 	EffectInit();			// エフェクト用初期化処理
 	
@@ -191,9 +201,29 @@ void GameMain(void)
 	if (!pauseFlag)
 	{
 		testcnt++;
+		// 配列の初期化
+		drawOrderCnt = 0;
+		for (int i = 0; i < DRAW_ORDER_MAX; i++)
+		{
+			// 配列の初期化
+			drawOrderList[i].characterType = CHARACTER_MAX;
+			drawOrderList[i].index = 0;
+			drawOrderList[i].y = 0;
+		}
 
 		playerPos = PlayerControl();
 		EnemyControl(playerPos);
+
+		//// プレイヤーとと敵との当たり判定
+		//if (PlayerHitCheck(playerPos, 12))
+		//{
+		//	if (!mutekiFlag)
+		//	{
+		//		// 当たり
+		//		playerLife--;
+		//		mutekiFlag = true;
+		//	}
+		//}
 	}
 	GameDraw();
 }
@@ -201,8 +231,23 @@ void GameMain(void)
 void GameDraw(void)
 {
 	StageDrawInit();
-	PlayerGameDraw();
-	EnemyDrawInit();
+
+	for (int i = 0; i < drawOrderCnt; i++)
+	{
+		switch (drawOrderList[i].characterType)
+		{
+		case CHARACTER_ENEMY:		// 敵の描画
+			EnemyDrawInit(drawOrderList[i].index);
+			break;
+		case CHARACTER_PLAYER:
+			PlayerGameDraw();		// プレイヤーの描画
+			break;
+		default:
+			break;
+		}
+	}
+	/*PlayerGameDraw();
+	EnemyDrawInit();*/
 
 	DrawFormatString(0, 0, GetColor(255, 255, 255), "GameCounter = %d", sceneCounter);
 	DrawFormatString(50, 50, GetColor(255, 255, 255), "test = %d", testcnt);
@@ -238,23 +283,24 @@ void AddCharOrder(CHARACTER_TYPE characterType, int index, int y)
 {
 	int insertIndex = drawOrderCnt;// 挿入場所の配列の添え字
 
-	for (int i = 0; i < drawOrderCnt; i++)
+	// 1.リスト内のデータと引数のY座標を比較して挿入場所を決める
+	for (int dol = 0; dol < drawOrderCnt; dol++)	// すべてのリストデータを
 	{
-		if (y < drawOrderList[i].y)	// リストのデータと引数ｙを比較
+		if (y < drawOrderList[dol].y)	//リストのデータと引数のYを比較
 		{
-			insertIndex = i;// 挿入場所の配列の添え字
+			insertIndex = dol;// 挿入場所の配列の添え字
 			break;
 		}
 	}
 
-	// 挿入場所が決まったので、挿入場所を空けるためにほかのデータを移動させる
-	for (int i = drawOrderCnt; i > insertIndex; i--)
+	// 2.挿入場所が決まったので、挿入場所を空けるためにほかのデータを移動させる
+	for (int dol = drawOrderCnt; dol > insertIndex; dol--)
 	{
 		// データをコピー
-		drawOrderList[i] = drawOrderList[i - 1];
+		drawOrderList[dol] = drawOrderList[dol - 1];
 	}
 
-	// 挿入場所にデータを追加(配列に追加)
+	// 3.挿入場所にデータを追加(配列に追加)
 	drawOrderList[insertIndex].characterType = characterType;
 	drawOrderList[insertIndex].index = index;
 	drawOrderList[insertIndex].y = y;

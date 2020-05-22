@@ -132,6 +132,9 @@ XY PlayerControl(void)
 			break;
 		}
 	}
+	// 表示順にデータを格納
+	AddCharOrder(CHARACTER_PLAYER, 0, player.pos.y + player.size.y);// プレイヤー足元
+
 	return player.pos;
 }
 

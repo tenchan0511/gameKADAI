@@ -36,8 +36,11 @@ enum CHARACTER_TYPE
 {
 	CHARACTER_PLAYER,
 	CHARACTER_ENEMY,
+	CHARACTER_SHOT,
+	CHARACTER_ENEMY_SHOT,
 	CHARACTER_MAX
 };
+
 
 struct XY
 {
@@ -77,5 +80,5 @@ void GameDraw(void);
 void GameOverScene(void);
 void GameOverDraw(void);
 
-// Y座標リスト
+// すべてのキャラのY座標のリストを作る
 void AddCharOrder(CHARACTER_TYPE characterType, int index, int y);
