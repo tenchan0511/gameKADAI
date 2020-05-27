@@ -117,6 +117,12 @@ bool EnemyGameInit(void)
 
 void EnemyControl(XY playerPos)
 {
+	for (int i = 0; i < ENEMY_MAX; i++)
+	{
+		XY enemyPosCopy = enemy[i].pos;	// プレイヤーの座標をコピー
+		XY enemyPosOffset = enemyPosCopy;
+	}
+
 	moveCnt++;
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -135,7 +141,10 @@ void EnemyControl(XY playerPos)
 					playerPos.y - enemy[i].pos.y > -96  
 					)
 				{
-					MoveEnemyXY(&enemy[i], playerPos);
+					if (MoveEnemyX(&enemy[i], playerPos) == 0)
+					{
+						MoveEnemyY(&enemy[i], playerPos);
+					}
 				}
 				else
 				{
@@ -163,7 +172,8 @@ void EnemyControl(XY playerPos)
 		case ENEMY_TYPE_SEARCH:
 			if ((moveCnt / 45) % 2 == 0)
 			{
-				MoveEnemyXY(&enemy[i], playerPos);
+				MoveEnemyRandom(&enemy[i], moveDir[i]);
+				//MoveEnemyXY(&enemy[i], playerPos);
 			}
 			break;
 		default:
@@ -176,7 +186,6 @@ void EnemyControl(XY playerPos)
 
 void EnemyDrawInit(int index)
 {
-	
 	enemy[index].animCnt++;
 
 	DrawGraph(
@@ -184,52 +193,91 @@ void EnemyDrawInit(int index)
 		enemy[index].pos.y,
 		enemyImage[enemy[index].charType][(enemy[index].moveDir * 3) + ((enemy[index].animCnt / 10) % 3)],
 		true);
-	
 }
 
 int MoveEnemyX(CHARACTER* enemy, XY playerpos)
 {
+	XY enemyPosCopy = (*enemy).pos;
+	XY enemyPosOffset = enemyPosCopy;
+
 	int speed = (*enemy).moveSpeed;
 
 	int diff = playerpos.x - (*enemy).pos.x;
+
 	if (diff >= 0)
 	{
 		speed = (diff < speed) ? diff : speed;
 
 		// 移動
-		(*enemy).pos.x += speed;
-		(*enemy).moveDir = DIR_RIGHT;
+		enemyPosCopy.x += speed;
+		enemyPosOffset.x = enemyPosCopy.x + (*enemy).offsetSize.x;
+		enemyPosOffset.y = enemyPosCopy.y + (*enemy).offsetSize.y;
+		if (IsPass(enemyPosOffset))
+		{
+			// 通れる
+			(*enemy).pos = enemyPosCopy;
+			(*enemy).moveDir = DIR_RIGHT;
+		}
 	}
 	else
 	{
 		speed = (-diff < speed) ? -diff : speed;
 
-		(*enemy).pos.x -= speed;
-		(*enemy).moveDir = DIR_LEFT;
+		// 移動
+		enemyPosCopy.x -= speed;
+		enemyPosOffset.x = enemyPosCopy.x + (*enemy).offsetSize.x;
+		enemyPosOffset.y = enemyPosCopy.y + (*enemy).offsetSize.y;
+		if (IsPass(enemyPosOffset))
+		{
+			// 通れる
+			(*enemy).pos = enemyPosCopy;
+			(*enemy).moveDir = DIR_LEFT;
+		}
 	}
+
 	return speed;
 }
 
 int MoveEnemyY(CHARACTER* enemy, XY playerpos)
 {
+	XY enemyPosCopy = (*enemy).pos;
+	XY enemyPosOffset = enemyPosCopy;
+
 	int speed = (*enemy).moveSpeed;
 	int diff = playerpos.y - (*enemy).pos.y;//()で優先順位を指定
+
 	if (diff >= 0)
 	{
 		// speedを変えるか
 		speed = (diff < speed) ? diff : speed;
 
 		// 移動
-		(*enemy).pos.y += speed;
-		(*enemy).moveDir = DIR_DOWN;
+		enemyPosCopy.y += speed;
+		enemyPosOffset.x = enemyPosCopy.x + (*enemy).offsetSize.x;
+		enemyPosOffset.y = enemyPosCopy.y + (*enemy).offsetSize.y;
+		if (IsPass(enemyPosOffset))
+		{
+			// 通れる
+			(*enemy).pos = enemyPosCopy;
+			(*enemy).moveDir = DIR_DOWN;
+		}
 	}
 	else
 	{
 		speed = (-diff < speed) ? -diff : speed;
 
-		(*enemy).pos.y -= speed;
-		(*enemy).moveDir = DIR_UP;
+		// 移動
+		enemyPosCopy.y -= speed;
+		enemyPosOffset.x = enemyPosCopy.x + (*enemy).offsetSize.x;
+		enemyPosOffset.y = enemyPosCopy.y + (*enemy).offsetSize.y;
+		if (IsPass(enemyPosOffset))
+		{
+			// 通れる
+			(*enemy).pos = enemyPosCopy;
+			(*enemy).moveDir = DIR_UP;
+		}
 	}
+
 	return speed;
 }
 
@@ -250,23 +298,6 @@ int MoveEnemyXY(CHARACTER* enemy, XY playerpos)
 	}
 
 	return speed;
-}
-
-bool PlayerHitCheck(XY ePos, int eSize)
-{
-	for (int en = 0; en < ENEMY_MAX; en++)
-	{
-		// 敵との判定
-		if ((enemy[en].pos.x - enemy[en].size.x / 2 < ePos.x + eSize)
-			&& (enemy[en].pos.x + enemy[en].size.x / 2 > ePos.x)
-			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y + eSize)
-			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y))
-		{
-			// 当たり
-			return true;
-		}
-	}
-	return false;
 }
 
 int MoveEnemyRandom(CHARACTER* enemy, int moveDir)
@@ -311,4 +342,21 @@ int MoveEnemyRandom(CHARACTER* enemy, int moveDir)
 		break;
 	}
 	return speed;
+}
+
+bool PlayerHitCheck(XY ePos, int eSize)
+{
+	for (int en = 0; en < ENEMY_MAX; en++)
+	{
+		// 敵との判定
+		if ((enemy[en].pos.x - enemy[en].size.x / 2 < ePos.x + eSize)
+			&& (enemy[en].pos.x + enemy[en].size.x / 2 > ePos.x)
+			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y + eSize)
+			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y))
+		{
+			// 当たり
+			return true;
+		}
+	}
+	return false;
 }

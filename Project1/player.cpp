@@ -46,7 +46,7 @@ bool PlayerGameInit(void)
 XY PlayerControl(void)
 {
 	bool moveFlag = false;			// true:移動
-	XY playerIndex;					// マップ配列の座標
+	//XY playerIndex;					// マップ配列の座標
 	XY playerPosCopy = player.pos;	// プレイヤーの座標をコピー
 	XY playerPosOffset = playerPosCopy;
 

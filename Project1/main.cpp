@@ -214,16 +214,16 @@ void GameMain(void)
 		playerPos = PlayerControl();
 		EnemyControl(playerPos);
 
-		//// プレイヤーとと敵との当たり判定
-		//if (PlayerHitCheck(playerPos, 12))
-		//{
-		//	if (!mutekiFlag)
-		//	{
-		//		// 当たり
-		//		playerLife--;
-		//		mutekiFlag = true;
-		//	}
-		//}
+		// プレイヤーとと敵との当たり判定
+		if (PlayerHitCheck(playerPos, 12))
+		{
+			if (!mutekiFlag)
+			{
+				// 当たり
+				playerLife--;
+				mutekiFlag = true;
+			}
+		}
 	}
 	GameDraw();
 }
