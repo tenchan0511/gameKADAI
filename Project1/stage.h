@@ -15,6 +15,15 @@ enum STAGE_ID {
 	STAGE_ID_MAX,
 };
 
+// イベントの種類
+enum EVENT_ID {
+	EVENT_ID_NON,
+	EVENT_ID_KOIN,
+	EVENT_ID_KONBINI,
+	EVENT_ID_JIHANKI,
+	EVENT_ID_MAX,
+};
+
 // プロトタイプ宣言
 bool StageSystemInit(void);
 void StageInit(void);
@@ -25,3 +34,4 @@ XY PosToIndex(XY pos);	// マップ上のプレイヤーの座標を求める関数
 bool IsPass(XY pos);	// 通ってよいか判断する
 
 void SetMapData(STAGE_ID stage_ID);
+EVENT_ID GetEvent(XY pos);

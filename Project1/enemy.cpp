@@ -349,10 +349,10 @@ bool PlayerHitCheck(XY ePos, int eSize)
 	for (int en = 0; en < ENEMY_MAX; en++)
 	{
 		// “G‚Æ‚Ì”»’è
-		if ((enemy[en].pos.x - enemy[en].size.x / 2 < ePos.x + eSize)
-			&& (enemy[en].pos.x + enemy[en].size.x / 2 > ePos.x)
-			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y + eSize)
-			&& (enemy[en].pos.y + enemy[en].size.y / 2 > ePos.y))
+		if ((enemy[en].pos.x - enemy[en].size.x / 4 < ePos.x/* + eSize*/)
+			&& (enemy[en].pos.x + enemy[en].size.x / 4 > ePos.x)
+			&& (enemy[en].pos.y - enemy[en].size.y / 4 < ePos.y /*+ eSize*/)
+			&& (enemy[en].pos.y + enemy[en].size.y / 4 > ePos.y))
 		{
 			// “–‚½‚è
 			return true;

@@ -7,6 +7,7 @@ int bright;
 
 // 一時停止処理
 bool pauseFlag;		// 一時停止処理(true:	)
+bool stopFlag;
 int testcnt;
 
 // エフェクト用初期化処理
@@ -14,7 +15,7 @@ void EffectInit(void)
 {
 	// 一時停止処理用
 	pauseFlag = false;
-
+	stopFlag = false;
 	// フェード処理用
 	fadeIn = true;
 	fadeOut = false;

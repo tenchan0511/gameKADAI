@@ -252,3 +252,33 @@ void SetMapData(STAGE_ID stageID)
 		stageID = STAGE_ID_2;
 	}
 }
+
+// 指定された座標にイベント
+EVENT_ID GetEvent(XY pos)
+{
+	XY index;
+	index = PosToIndex(pos);
+	switch (map[index.y][index.x])
+	{
+	case 15:
+		return EVENT_ID_KAIDAN;
+		break;
+	case 24:
+	case 25:
+	case 26:
+	case 33:
+	case 34:
+	case 35:
+	case 42:
+	case 41:
+	case 40:
+		return EVENT_ID_SPEEDDOWN;
+	case 13:
+		return EVENT_ID_IDO;
+	case 7:
+		return EVENT_ID_RETURN;
+	default:
+		return EVENT_ID_NON;
+		break;
+	}
+}

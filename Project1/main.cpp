@@ -17,9 +17,14 @@ struct DRAW_ORDER
 };
 
 // 変数
-int sceneCounter;
+//int sceneCounter;
 SCN_ID scnID;		// シーン管理用
 SCN_ID scnIDpre;
+int playerLife;
+int playerLifeImage;
+bool mutekiFlag;	// 無敵状態フラグ
+int mutekiCnt;		// 無敵カウント
+int stopCnt;
 
 // 表示ソート用
 int drawOrderCnt;							// Listに格納されたデータ数
@@ -41,7 +46,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		if (scnID != scnIDpre)
 		{
-			sceneCounter = 0;
+			//sceneCounter = 0;
 		}
 		scnIDpre = scnID;
 
@@ -52,10 +57,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			scnID = SCN_ID_TITLE;
 			break;
 		case SCN_ID_TITLE:
-			if (fadeIn)
-			{				
-				if (!FadeInScreen(5)){} // フェードインが終わった後の処理を書く
-			}
 			if (fadeOut)
 			{
 				if (!FadeOutScreen(5))
@@ -64,13 +65,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					scnID = SCN_ID_GAME;
 				}
 			}
+			if (fadeIn)
+			{				
+				if (!FadeInScreen(5)){} // フェードインが終わった後の処理を書く
+			}
 			TitleScene();
 			break;
 		case SCN_ID_GAME:
-			if (fadeIn)
-			{
-				if (!FadeInScreen(5)) {} // フェードインが終わった後の処理を書く
-			}
 			if (fadeOut)
 			{
 				if (!FadeOutScreen(5))
@@ -79,13 +80,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					scnID = SCN_ID_GAMEOVER;
 				}
 			}
-			GameMain();
-			break;
-		case SCN_ID_GAMEOVER:
 			if (fadeIn)
 			{
 				if (!FadeInScreen(5)) {} // フェードインが終わった後の処理を書く
 			}
+			GameMain();
+			break;
+		case SCN_ID_GAMEOVER:
 			if (fadeOut)
 			{
 				if (!FadeOutScreen(5))
@@ -94,27 +95,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					scnID = SCN_ID_INIT;
 				}
 			}
+			if (fadeIn)
+			{
+				if (!FadeInScreen(5)) {} // フェードインが終わった後の処理を書く
+			}
 			GameOverScene();
 			break;
 		default:
 			AST();
 			break;
 		}
-
-		// メイン処理
-
-		sceneCounter++;
+		//sceneCounter++;
 
 		ScreenFlip();	 // 裏画面を表画面に瞬間コピー
 	}
 	DxLib_End();		// DXライブラリの終了処理
 	return 0;			// このプログラムの終了
-
 }
 
 // システム初期化
 bool SystemInit(void)
 {
+	bool rtnFlag = true;
 	// システム処理
 	SetWindowText("Project1");
 
@@ -129,11 +131,14 @@ bool SystemInit(void)
 	EnemySystemInit();	// 敵の初期化
 
 	// グラフィックの登録
-
+	playerLifeImage = LoadGraph("image/Life.png");
 
 	// 変数初期化
-	sceneCounter = 0;
 	scnID = SCN_ID_INIT;
+	playerLife = 3;
+	mutekiFlag = false;
+	mutekiCnt = 0;
+	stopCnt = 0;
 
 	// 配列の初期化
 	drawOrderCnt = 0;
@@ -155,6 +160,7 @@ void InitScene(void)
 {
 	StageInit();
 	PlayerGameInit();
+	playerLife = 3;
 	EnemyGameInit();
 }
 
@@ -170,8 +176,6 @@ void TitleScene(void)
 }
 void TitleDraw(void)
 {
-	DrawFormatString(0, 0, GetColor(255, 255, 255), "TitleCounter = %d", sceneCounter);
-
 	DrawBox(100, 100, 700, 500, GetColor(0, 255, 0), true);
 }
 
@@ -179,6 +183,13 @@ void TitleDraw(void)
 void GameMain(void)
 {
 	XY playerPos;
+
+	if (playerLife == 0)
+	{
+		mutekiFlag = false;
+		fadeOut = true;
+	}
+
 	if (keyDownTrigger[KEY_ID_SPACE])
 	{
 		/*scnID = SCN_ID_GAMEOVER;*/
@@ -198,9 +209,26 @@ void GameMain(void)
 			SetDrawBright(127, 127, 127);
 		}
 	}
-	if (!pauseFlag)
+
+	if (stopFlag)
 	{
-		testcnt++;
+		stopCnt++;
+		if (stopCnt < 180)
+		{
+			stopFlag = true;
+		}
+		else
+		{
+			stopFlag = false;
+			stopCnt = 0;
+			StageInit();
+			PlayerGameInit();
+			EnemyGameInit();
+		}
+	}
+
+	if (!pauseFlag && !stopFlag)
+	{
 		// 配列の初期化
 		drawOrderCnt = 0;
 		for (int i = 0; i < DRAW_ORDER_MAX; i++)
@@ -221,7 +249,28 @@ void GameMain(void)
 			{
 				// 当たり
 				playerLife--;
+				stopFlag = true;
 				mutekiFlag = true;
+			}
+		}
+
+		// 無敵時間
+		if (mutekiFlag)
+		{
+			mutekiCnt++;
+			if (mutekiCnt / 360 % 2 == 0)
+			{
+				mutekiFlag = true;
+				//if (mutekiCnt <= 60)
+				//{
+				//	randX = 0;
+				//	randX = -3 + GetRand(6);//-3から6までの乱数
+				//}
+			}
+			else
+			{
+				mutekiFlag = false;
+				mutekiCnt = 0;
 			}
 		}
 	}
@@ -246,13 +295,10 @@ void GameDraw(void)
 			break;
 		}
 	}
-	/*PlayerGameDraw();
-	EnemyDrawInit();*/
-
-	DrawFormatString(0, 0, GetColor(255, 255, 255), "GameCounter = %d", sceneCounter);
-	DrawFormatString(50, 50, GetColor(255, 255, 255), "test = %d", testcnt);
-
-	/*DrawBox(100, 100, 700, 500, GetColor(255, 0, 0), true);*/
+	for (int i = 0; i < playerLife; i++)
+	{
+		DrawGraph(i * 24, 0, playerLifeImage, true);
+	}
 
 	// PAUSE描画
 	if (pauseFlag)
@@ -274,8 +320,7 @@ void GameOverScene(void)
 }
 void GameOverDraw(void)
 {
-	DrawFormatString(0, 0, GetColor(255, 255, 255), "GameOverCounter = %d", sceneCounter);
-
+	
 	DrawBox(100, 100, 700, 500, GetColor(0, 0, 255), true);
 }
 

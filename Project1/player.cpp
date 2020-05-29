@@ -149,6 +149,4 @@ void PlayerGameDraw(void)
 		player.pos.x, 
 		player.pos.y, 
 		playerImage[player.moveDir][(player.animCnt / 10) % 3], true);
-
-	DrawFormatString(300, 0, 0xffffff, "anmCnt = %d", player.animCnt);
 }

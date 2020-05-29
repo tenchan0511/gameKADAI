@@ -6,6 +6,7 @@ extern int fadeOut;
 
 // 一時停止処理
 extern bool pauseFlag;		// 一時停止処理(true:	)
+extern bool stopFlag;		// 一時停止処理(true:	)
 extern int testcnt;
 
 void EffectInit(void);				// エフェクト用初期化
